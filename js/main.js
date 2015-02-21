@@ -1,29 +1,26 @@
 var game = new Phaser.Game(500, 500, Phaser.AUTO, 'battleships', { preload: preload, create: create, update: update, render: render });
 
+var tile;
 var tileX;
 var tileY;
 
 function preload() {
 	tileX = game.world.width / 10;
 	tileY = game.world.height / 10;
+
+	game.load.image('ship4', 'assets/4ship.png');
 }
 
-var map;
-var player1;
 
 
-var tile;
 
-
-var counter = 0;
-var tileNumber;
-var colCounter;
-var rowCounter;
 
 function create() {
+	game.add.sprite(0, 0, 'ship4')
 	game.stage.backgroundColor = '#b2b2b2';
 	renderGrid();
 	game.input.onDown.add(detectShip, this);
+	console.log(game.cache.getImage('ship4').width / 50)
 }
 
 function update() {
@@ -51,7 +48,6 @@ function renderRows(posX, posY) {
 
 	tile = game.add.graphics();
 	tile.lineStyle(2, 0xffffff, 1);
-	tile.beginFill(0x000000, 1);
 	tile.drawRect(posX, posY, tileX, tileY);
 	tile.endFill();
 }
