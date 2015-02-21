@@ -1,16 +1,19 @@
-var game = new Phaser.Game(600, 600, Phaser.CANVAS, 'battleships', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(500, 500, Phaser.AUTO, 'battleships', { preload: preload, create: create, update: update, render: render });
+
+var tileX;
+var tileY;
 
 function preload() {
+	tileX = game.world.width / 10;
+	tileY = game.world.height / 10;
 }
 
 var map;
 var player1;
-var gridWidth;
 
 
-var marker;
-var tileX = 60;
-var tileY = 60;
+var tile;
+
 
 var counter = 0;
 var tileNumber;
@@ -27,57 +30,36 @@ function create() {
 	player1 = map.create('player1', 10, 10, tileX, tileY);
 	player1.resizeWorld();
 	renderGrid();
-	// game.input.addMoveCallback(showBorder, this);
+	game.input.onDown.add(detectShip, this);
 }
 
 function update() {
-
 }
 
 function render() {
 
 }
 
+function detectShip() {
+	console.log(map)
+	console.log(map.getTileWorldXY(30, 30))
+}
+
 function renderGrid() {
-	gridWidth = Phaser.Math.floor(game.world.width / 10);
-	gridHeight = Phaser.Math.floor(game.world.height / 10);
-	var loop = 1;
-	for (var i = 0; i <= 10; i++) {
-		for (var y = 0; y <= 10; y++) {
-
-			if (loop === 11) {
-				return false;
-			}
-	var counter = 0;
-	console.log(counter)
+	for (var i = 0; i < 10; i++) {
+		for (var y = 0; y < 10; y++) {
 			renderRows(i, y);
-
-			if (y === 10 && i === 10) {
-				y = 0;
-				i = 0;
-				loop = ++loop;
-			}
 		}
 	}
 }
 
-function renderRows(row, col) {
+function renderRows(posX, posY) {
+	posX = posX * tileX;
+	posY = posY * tileY;
 
-	tileNumber = counter + row;
-	// console.log(row)
-	rowCounter = row * 60;
-	colCounter = col * 60;
-	// console.log(rowCounter, colCounter)
-	marker = game.add.graphics();
-	marker.beginFill(0x000000, 0.2);
-	marker.drawRect(rowCounter, colCounter, 60, 60);
-	marker.endFill();
-
-	// console.log(tileNumber)
-	if (row === 10)  {
-		rowCounter = counter + 60;
-	}
-	if (col === 10) {
-		colCounter = counter + 60;
-	}
+	tile = game.add.graphics();
+	tile.lineStyle(2, 0xffffff, 1);
+	tile.beginFill(0x000000, 1);
+	tile.drawRect(posX, posY, tileX, tileY);
+	tile.endFill();
 }
