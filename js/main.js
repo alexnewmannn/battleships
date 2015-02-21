@@ -10,10 +10,12 @@ function preload() {
 	tileY = game.world.height / 10;
 
 	game.load.image('ship4', 'assets/4ship.png');
+	game.load.image('background', 'assets/background.jpg')
 }
 
 function create() {
-	game.stage.backgroundColor = '#b2b2b2';
+	var background = game.add.tileSprite(0, 0, 500, 500, 'background');
+	game.stage.backgroundColor = '#444444';
 	renderGrid();
 	renderShips();
 }
@@ -31,11 +33,11 @@ function detectShip() {
 }
 
 function calculatePosition(value) {
-	return value <= Phaser.Math.floor(game.world.width - game.cache.getImage('ship4').width)
+	return value <= Phaser.Math.floor(game.world.width - game.cache.getImage('ship4').width);
 }
 
 function renderShips() {
-	var myArray = plotX.filter(calculatePosition)
+	var myArray = plotX.filter(calculatePosition);
 	var randomX = myArray[Math.floor(Math.random() * myArray.length)];
 	game.add.image(randomX, 0, 'ship4')
 }
@@ -48,7 +50,7 @@ function renderGrid() {
 			posY = y * tileY;
 
 			tile = game.add.graphics();
-			tile.lineStyle(2, 0xffffff, 1);
+			tile.lineStyle(2, 0x00ff00, 0.2);
 			tile.drawRect(posX, posY, tileX, tileY); // Then the above math is applied to the position of rect
 			tile.endFill();
 		}
