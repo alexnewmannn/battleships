@@ -22,13 +22,6 @@ var rowCounter;
 
 function create() {
 	game.stage.backgroundColor = '#b2b2b2';
-
-	//pass through difficulties to change the size of grid.
-
-	map = game.add.tilemap();
-
-	player1 = map.create('player1', 10, 10, tileX, tileY);
-	player1.resizeWorld();
 	renderGrid();
 	game.input.onDown.add(detectShip, this);
 }
@@ -41,8 +34,7 @@ function render() {
 }
 
 function detectShip() {
-	console.log(map)
-	console.log(map.getTileWorldXY(30, 30))
+
 }
 
 function renderGrid() {
