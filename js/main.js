@@ -3,14 +3,22 @@ var game = new Phaser.Game(500, 500, Phaser.AUTO, 'battleships', { preload: prel
 var tile;
 var tileX;
 var tileY;
+var ships = [];
 var plotX = [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+var arrayX = [];
+var arrayY = [];
+var calculateWidth = [];
+var filteredArray = [];
 
 function preload() {
 	tileX = game.world.width / 10;
 	tileY = game.world.height / 10;
 
 	game.load.image('ship4', 'assets/4ship.png');
+	game.load.image('ship3', 'assets/3ship.png');
 	game.load.image('background', 'assets/background.jpg')
+
+	ships = ['ship4', 'ship3']; //pass in the asset name
 }
 
 function create() {
@@ -31,15 +39,29 @@ function render() {
 function detectShip() {
 	console.log('hi');
 }
-
 function calculatePosition(value) {
-	return value <= Phaser.Math.floor(game.world.width - game.cache.getImage('ship4').width);
+	// it should iterate through each image which s
+	for (var i = 0; i < ships.length; i++) {
+		calculateWidth.push(Phaser.Math.floor(game.world.width - game.cache.getImage(ships[i]).width));
+	}
+	// console.log(calculateWidth)
+	// console.log(ships)
+}
+
+function test(el) {
+	return function(value) {
+		console.log(calculateWidth[el])
+		return value <= calculateWidth[el]
+	}
 }
 
 function renderShips() {
-	var myArray = plotX.filter(calculatePosition);
-	var randomX = myArray[Math.floor(Math.random() * myArray.length)];
-	game.add.image(randomX, 0, 'ship4')
+	calculatePosition();
+
+	for (var j = 0; j < calculateWidth.length; j++) {
+		filteredArray = plotX.filter(test(j));
+		game.add.image(filteredArray[Math.floor(Math.random() * filteredArray.length)], filteredArray[Math.floor(Math.random() * filteredArray.length)], ships[j])
+	}
 }
 
 function renderGrid() {
