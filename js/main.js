@@ -3,6 +3,7 @@ var game = new Phaser.Game(500, 500, Phaser.AUTO, 'battleships', { preload: prel
 var tile;
 var tileX;
 var tileY;
+var plotX = [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500];
 
 function preload() {
 	tileX = game.world.width / 10;
@@ -11,19 +12,14 @@ function preload() {
 	game.load.image('ship4', 'assets/4ship.png');
 }
 
-
-
-
-
 function create() {
-	game.add.sprite(0, 0, 'ship4')
 	game.stage.backgroundColor = '#b2b2b2';
 	renderGrid();
-	game.input.onDown.add(detectShip, this);
-	console.log(game.cache.getImage('ship4').width / 50)
+	renderShips();
 }
 
 function update() {
+	game.input.onDown.add(detectShip, this);
 }
 
 function render() {
@@ -31,23 +27,30 @@ function render() {
 }
 
 function detectShip() {
+	console.log('hi');
+}
 
+function calculatePosition(value) {
+	return value <= Phaser.Math.floor(game.world.width - game.cache.getImage('ship4').width)
+}
+
+function renderShips() {
+	var myArray = plotX.filter(calculatePosition)
+	var randomX = myArray[Math.floor(Math.random() * myArray.length)];
+	game.add.image(randomX, 0, 'ship4')
 }
 
 function renderGrid() {
-	for (var i = 0; i < 10; i++) {
+	// Here the current iteration is multiplied by the width of each tile
+	for (var x = 0; x < 10; x++) {
 		for (var y = 0; y < 10; y++) {
-			renderRows(i, y);
+			posX = x * tileX;
+			posY = y * tileY;
+
+			tile = game.add.graphics();
+			tile.lineStyle(2, 0xffffff, 1);
+			tile.drawRect(posX, posY, tileX, tileY); // Then the above math is applied to the position of rect
+			tile.endFill();
 		}
 	}
-}
-
-function renderRows(posX, posY) {
-	posX = posX * tileX;
-	posY = posY * tileY;
-
-	tile = game.add.graphics();
-	tile.lineStyle(2, 0xffffff, 1);
-	tile.drawRect(posX, posY, tileX, tileY);
-	tile.endFill();
 }
