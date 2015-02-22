@@ -16,9 +16,10 @@ function preload() {
 
 	game.load.image('ship4', 'assets/4ship.png');
 	game.load.image('ship3', 'assets/3ship.png');
-	game.load.image('background', 'assets/background.jpg')
+	game.load.image('ship2', 'assets/2ship.png');
+	game.load.image('background', 'assets/background.jpg');
 
-	ships = ['ship4', 'ship3']; //pass in the asset name
+	ships = ['ship4', 'ship3', 'ship2']; // pass in the asset name
 }
 
 function create() {
@@ -39,29 +40,28 @@ function render() {
 function detectShip() {
 	console.log('hi');
 }
+
 function calculatePosition(value) {
-	// it should iterate through each image which s
 	for (var i = 0; i < ships.length; i++) {
 		calculateWidth.push(Phaser.Math.floor(game.world.width - game.cache.getImage(ships[i]).width));
 	}
-	// console.log(calculateWidth)
-	// console.log(ships)
 }
 
-function test(el) {
+function filterValue(maxWidth) {
 	return function(value) {
-		console.log(calculateWidth[el])
-		return value <= calculateWidth[el]
-	}
+		return value <= calculateWidth[maxWidth];
+	};
 }
 
 function renderShips() {
 	calculatePosition();
 
-	for (var j = 0; j < calculateWidth.length; j++) {
-		filteredArray = plotX.filter(test(j));
-		game.add.image(filteredArray[Math.floor(Math.random() * filteredArray.length)], filteredArray[Math.floor(Math.random() * filteredArray.length)], ships[j])
+	for (var i = 0; i < calculateWidth.length; i++) {
+		filteredArray = plotX.filter(filterValue(i));
+		game.add.image(filteredArray[Math.floor(Math.random() * filteredArray.length)], filteredArray[Math.floor(Math.random() * filteredArray.length)], ships[i]);
 	}
+
+	console.log(sprite.width)
 }
 
 function renderGrid() {
@@ -72,7 +72,7 @@ function renderGrid() {
 			posY = y * tileY;
 
 			tile = game.add.graphics();
-			tile.lineStyle(2, 0x00ff00, 0.2);
+			tile.lineStyle(1, 0x00ffff, 0.2);
 			tile.drawRect(posX, posY, tileX, tileY); // Then the above math is applied to the position of rect
 			tile.endFill();
 		}
