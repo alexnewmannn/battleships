@@ -9,6 +9,7 @@ var arrayX = [];
 var arrayY = [];
 var calculateWidth = [];
 var filteredArray = [];
+var shipImages = [];
 
 function preload() {
 	tileX = game.world.width / 10;
@@ -30,14 +31,16 @@ function create() {
 }
 
 function update() {
-	game.input.onDown.add(detectShip, this);
+	// game.input.onDown.add(detectShip, this);
 }
 
 function render() {
 
 }
 
-function detectShip() {
+function detectShip(ship) {
+	console.log(ship)
+	ship.alpha = 1;
 	console.log('hi');
 }
 
@@ -58,10 +61,14 @@ function renderShips() {
 
 	for (var i = 0; i < calculateWidth.length; i++) {
 		filteredArray = plotX.filter(filterValue(i));
-		game.add.image(filteredArray[Math.floor(Math.random() * filteredArray.length)], filteredArray[Math.floor(Math.random() * filteredArray.length)], ships[i]);
+		shipImages.push(game.add.image(filteredArray[Math.floor(Math.random() * filteredArray.length)], filteredArray[Math.floor(Math.random() * filteredArray.length)], ships[i]));
 	}
 
-	console.log(sprite.width)
+	for (var j = 0; j < shipImages.length; j++) {
+		shipImages[j].inputEnabled = true;
+		shipImages[j].alpha = 0;
+		shipImages[j].events.onInputDown.add(detectShip, this)
+	}
 }
 
 function renderGrid() {
