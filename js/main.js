@@ -20,6 +20,8 @@ function preload() {
 	game.load.image('ship2', 'assets/2ship.png');
 	game.load.image('background', 'assets/background.jpg');
 
+	game.load.image('spacer', 'assets/spacer.png')
+
 	ships = ['ship4', 'ship3', 'ship2']; // pass in the asset name
 }
 
@@ -46,11 +48,14 @@ function update() {
 function render() {
 
 }
-
+var mask;
 function detectShip(ship) {
-	console.log(ship)
 	ship.alpha = 1;
-	console.log('hi');
+	mask = game.add.graphics(0, 0);
+	mask.beginFill(0xffffff);
+	mask.drawRect(ship.position.x, ship.position.y, 50, 50)
+	ship.mask = mask
+	console.log(ship)
 }
 
 function calculatePosition(value) {
@@ -75,9 +80,9 @@ function renderShips() {
 
 	for (var j = 0; j < shipImages.length; j++) {
 		shipImages[j].inputEnabled = true;
-		shipImages[j].alpha = 1; // set this to 0 when not developing
+		shipImages[j].alpha = 0.8; // set this to 0 when not developing
 		shipImages[j].boundingBox = true // bounding box and bounding box offset
-		shipImages[j].events.onInputDown.add(detectShip, this)
+		shipImages[j].events.onInputDown.add(detectShip, this) // move to update
 	}
 }
 
