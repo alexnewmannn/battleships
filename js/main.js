@@ -28,6 +28,15 @@ function create() {
 	game.stage.backgroundColor = '#444444';
 	renderGrid();
 	renderShips();
+	for (var j = 0; j < shipImages.length; j++) {
+		game.physics.enable(shipImages[j], Phaser.Physics.ARCADE);
+		shipImages[j].body.immovable = true;
+		shipImages[j].body.setSize(shipImages[j].body.width + 100, shipImages[j].body.height + 100, -50, -50)
+		shipImages[j].body.collideWorldBounds = true; // note this should actually prevent the use of filtered array below.
+		//maybe create a mask with a sprite the size of 1 square, this will take the mouse click position
+		// and snap it to the nearest grid point to prevent any overlaps.
+	}
+
 }
 
 function update() {
@@ -61,12 +70,13 @@ function renderShips() {
 
 	for (var i = 0; i < calculateWidth.length; i++) {
 		filteredArray = plotX.filter(filterValue(i));
-		shipImages.push(game.add.image(filteredArray[Math.floor(Math.random() * filteredArray.length)], filteredArray[Math.floor(Math.random() * filteredArray.length)], ships[i]));
+		shipImages.push(game.add.sprite(filteredArray[Math.floor(Math.random() * filteredArray.length)], filteredArray[Math.floor(Math.random() * filteredArray.length)], ships[i]));
 	}
 
 	for (var j = 0; j < shipImages.length; j++) {
 		shipImages[j].inputEnabled = true;
-		shipImages[j].alpha = 0;
+		shipImages[j].alpha = 1; // set this to 0 when not developing
+		shipImages[j].boundingBox = true // bounding box and bounding box offset
 		shipImages[j].events.onInputDown.add(detectShip, this)
 	}
 }
