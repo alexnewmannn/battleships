@@ -27,9 +27,11 @@ function create() {
 		}
 	}
 
-	map.putTile(1, 2, 3, layer2)
-	map.putTile(1, 3, 3, layer2)
-	map.putTile(1, 4, 3, layer2)
+	var test = Math.floor(Math.random() * 7);
+	var test2 = Math.floor(Math.random() * 9) + 1;
+	map.putTile(1, test, test2, layer2)
+	map.putTile(1, test + 1, test2, layer2)
+	map.putTile(1, test + 2, test2, layer2)
 
 	layer2.alpha = 0.3
 }
