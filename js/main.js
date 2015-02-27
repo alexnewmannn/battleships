@@ -3,7 +3,7 @@ var game = new Phaser.Game(500, 500, Phaser.AUTO, 'battleships', { preload: prel
 var map;
 var layer1;
 var test;
-var ships = [[3, 'y'], [4, 'y'], [6, 'y']];
+var ships = [[3, 'y'], [4, 'y'], [6, 'y'], [2, 'y']];
 var grid = [
 				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -31,7 +31,7 @@ function create() {
 	layer1 = map.create('tiles', 10, 10, 50, 50);
 	layer1.resizeWorld();
 	layer1.inputEnabled = true;
-	
+
 
 	layer2 = map.createBlankLayer('layer2', 10, 10, 50, 50);
 
@@ -50,7 +50,7 @@ function create() {
 	// map.putTile(1, test + 1, test2, layer2)
 	// map.putTile(1, test + 2, test2, layer2)
 
-	layer2.alpha = 0.9;
+	layer2.alpha = 1;
 }
 
 var shipBoundaries;
