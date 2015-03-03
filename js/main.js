@@ -95,6 +95,8 @@ function test() {
 		if (coords[i][0] === layer1.getTileX(game.input.activePointer.worldX) && coords[i][1] === layer1.getTileY(game.input.activePointer.worldY)) {
 			console.log('hit')
 			map.removeTile(layer1.getTileX(game.input.activePointer.worldX), layer1.getTileY(game.input.activePointer.worldY), layer2)
+			// new array of 'hits' that have been hit
+			// to avoid double clicks
 		}
 	}
 
