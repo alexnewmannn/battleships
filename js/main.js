@@ -1,9 +1,11 @@
 var game = new Phaser.Game(500, 500, Phaser.AUTO, 'battleships', { preload: preload, create: create, update: update, render: render });
 
 var map;
+var boom;
+var miss;
 var layer1;
 var test;
-var ships = [[3, 'y'], [4, 'y'], [6, 'y'], [2, 'y']];
+var ships = [[3, 'y'], [4, 'y'], [6, 'y'], [2, 'y'], [3, 'y'], [5, 'y']];
 var grid = [
 				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -19,19 +21,22 @@ var grid = [
 
 function preload() {
 	game.load.image('test', 'assets/tilemap.png');
+	game.load.audio('boom', ['assets/Audio/boom.mp3', 'assets/Audio/boom.ogg']); //sprite it
+	game.load.audio('no', ['assets/Audio/nono.mp3', 'assets/Audio.nono.ogg']);
 }
 
 function create() {
 	game.stage.backgroundColor = '#000';
 
 	map = game.add.tilemap();
+	boom = game.add.audio('boom');
+	miss = game.add.audio('no');
 
 	map.addTilesetImage('', 'test', 50, 50);
 
 	layer1 = map.create('tiles', 10, 10, 50, 50);
 	layer1.resizeWorld();
 	layer1.inputEnabled = true;
-
 
 	layer2 = map.createBlankLayer('layer2', 10, 10, 50, 50);
 
@@ -44,38 +49,34 @@ function create() {
 
 	renderShips();
 
-	var test = Math.floor(Math.random() * 7);
-	// var test2 = Math.floor(Math.random() * 9) + 1;
-	// map.putTile(1, test, test2, layer2)
-	// map.putTile(1, test + 1, test2, layer2)
-	// map.putTile(1, test + 2, test2, layer2)
-
-	layer2.alpha = 1;
+	// layer2.alpha = 0.9;
 }
 
 var shipBoundaries;
-var startingPoint;
-var row;
-var rowArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+var xAxis;
+var yAxis;
+var yAxisPoints = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 var coords = [];
 var jointcoords = [];
 
 function renderShips() {
 	for (var i = 0; i < ships.length; i++) { // this is for each ship
 		shipBoundaries = Math.floor(10 - ships[i][0])
-		startingPoint = Math.floor(Math.random() * shipBoundaries);
-		row = rowArray[Math.floor(Math.random() * rowArray.length)];
-
-		grid[row].splice(startingPoint, ships[i][0]); //delete the length of the ship starting from the start position
-		rowArray.splice(row, 1);
+		xAxis = Math.floor(Math.random() * shipBoundaries);
+		yAxis = yAxisPoints[Math.floor(Math.random() * yAxisPoints.length)];
+		grid[yAxis].splice(xAxis, ships[i][0]); //delete the length of the ship starting from the start position
+		yAxisPoints.splice(yAxis, 1);
 
 		for (var y = 1; y < ships[i][0] + 1; y++) { // this is the ship size
-			map.putTile(1, startingPoint, row, layer1);
-			console.log(startingPoint, row)
-			// delete grid[row][startingPoint];
-			jointcoords = [startingPoint, row];
+			map.putTile(1, xAxis, yAxis, layer1);
+			
+			jointcoords = { 
+				'name': [xAxis, yAxis], 
+				Y: yAxis, 
+				X: xAxis 
+			};
 			coords.push(jointcoords);
-			startingPoint += 1;
+			xAxis += 1;
 		}
 	}
 
@@ -88,22 +89,32 @@ function renderShips() {
 }
 
 function test() {
-	console.log(coords)
+	var mouseX = game.input.activePointer.worldX;
+	var mouseY = game.input.activePointer.worldY;
+	var tileX = layer1.getTileX(mouseX);
+	var tileY = layer1.getTileY(mouseY);
+
 	for (var i = 0; i < coords.length; i++) {
-		// console.log(coords[i][0], coords[i][1])
-		// console.log(coords[i][0],layer1.getTileX(game.input.activePointer.worldX))
-		if (coords[i][0] === layer1.getTileX(game.input.activePointer.worldX) && coords[i][1] === layer1.getTileY(game.input.activePointer.worldY)) {
-			console.log('hit')
-			map.removeTile(layer1.getTileX(game.input.activePointer.worldX), layer1.getTileY(game.input.activePointer.worldY), layer2)
-			// new array of 'hits' that have been hit
-			// to avoid double clicks
+		if (tileX === coords[i].X && tileY === coords[i].Y) {
+			map.removeTile(layer1.getTileX(mouseX), layer1.getTileY(mouseY), layer2)
+			boom.play();
+			break;
+		} else {
+			// miss.play();
+			map.putTile(2, layer1.getTileX(mouseX), layer1.getTileY(mouseY), layer2)
+		}
+
+		console.log(i)
+		console.log(coords.length)
+
+		if (i + 1 === coords.length) {
+			miss.play();
 		}
 	}
-
 }
 
 function update() {
-			layer1.events.onInputDown.add(test, this)
+	layer1.events.onInputDown.add(test, this)
 }
 
 function render() {
