@@ -92,13 +92,23 @@ function renderShips() {
 	// and be checked via - array[i][0] && array[i][0] were clicked 
 }
 
+var clicked = [];
+
+
 function test() {
 	var mouseX = game.input.activePointer.worldX;
 	var mouseY = game.input.activePointer.worldY;
 	var tileX = layer1.getTileX(mouseX);
 	var tileY = layer1.getTileY(mouseY);
 
+	for (var j = 0; j < clicked.length; j++) {
+		if (clicked[j][0] === tileX && clicked[j][1] === tileY) {
+			return false;
+		}
+	}
+
 	for (var i = 0; i < coords.length; i++) {
+		// console.log(clicked)
 		if (tileX === coords[i].X && tileY === coords[i].Y) {
 			map.removeTile(layer1.getTileX(mouseX), layer1.getTileY(mouseY), layer2)
 			fx.play('boom');
@@ -111,7 +121,9 @@ function test() {
 		if (i + 1 === coords.length && tileX !== coords[i].X) {
 			fx.play('noo');
 		}
+
 	}
+	clicked.push([tileX, tileY]);
 }
 
 function update() {
