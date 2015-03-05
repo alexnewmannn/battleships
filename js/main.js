@@ -1,8 +1,7 @@
 var game = new Phaser.Game(500, 500, Phaser.AUTO, 'battleships', { preload: preload, create: create, update: update, render: render });
 
 var map;
-var boom;
-var miss;
+var fx;
 var layer1;
 var test;
 var ships = [[3, 'y'], [4, 'y'], [6, 'y'], [2, 'y'], [3, 'y'], [5, 'y']];
@@ -23,14 +22,18 @@ function preload() {
 	game.load.image('test', 'assets/tilemap.png');
 	game.load.audio('boom', ['assets/Audio/boom.mp3', 'assets/Audio/boom.ogg']); //sprite it
 	game.load.audio('no', ['assets/Audio/nono.mp3', 'assets/Audio.nono.ogg']);
+	game.load.audio('sfx', ['assets/Audio/audiosprite.mp3', 'assets/Audio.audiosprite/ogg']);
 }
 
 function create() {
 	game.stage.backgroundColor = '#000';
 
+	fx = game.add.audio('sfx');
+	fx.allowMultiple = true;
+	fx.addMarker('boom', 0, 1.0);
+	fx.addMarker('noo', 1, 2.4);
+
 	map = game.add.tilemap();
-	boom = game.add.audio('boom');
-	miss = game.add.audio('no');
 
 	map.addTilesetImage('', 'test', 50, 50);
 
@@ -39,7 +42,6 @@ function create() {
 	layer1.inputEnabled = true;
 
 	layer2 = map.createBlankLayer('layer2', 10, 10, 50, 50);
-
 
 	for (var y = 0; y < 50; y++) {
 		for (var i = 0; i < 50; i++) {
@@ -68,7 +70,9 @@ function renderShips() {
 		yAxisPoints.splice(yAxis, 1);
 
 		for (var y = 1; y < ships[i][0] + 1; y++) { // this is the ship size
-			map.putTile(1, xAxis, yAxis, layer1);
+			// randomNum = Math.round(Math.random();
+			// console.log(randomNum)
+			map.putTile(Math.round(Math.random()) + 1, xAxis, yAxis, layer1);
 			
 			jointcoords = { 
 				'name': [xAxis, yAxis], 
@@ -97,18 +101,15 @@ function test() {
 	for (var i = 0; i < coords.length; i++) {
 		if (tileX === coords[i].X && tileY === coords[i].Y) {
 			map.removeTile(layer1.getTileX(mouseX), layer1.getTileY(mouseY), layer2)
-			boom.play();
+			fx.play('boom');
 			break;
 		} else {
-			// miss.play();
-			map.putTile(2, layer1.getTileX(mouseX), layer1.getTileY(mouseY), layer2)
+			map.putTile(3, layer1.getTileX(mouseX), layer1.getTileY(mouseY), layer2)
 		}
 
-		console.log(i)
-		console.log(coords.length)
-
-		if (i + 1 === coords.length) {
-			miss.play();
+		// If the for loop ends and the last loop isnt a hit, play the sound to avoid looping
+		if (i + 1 === coords.length && tileX !== coords[i].X) {
+			fx.play('noo');
 		}
 	}
 }
