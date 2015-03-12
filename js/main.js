@@ -1,68 +1,93 @@
-var game = new Phaser.Game(500, 500, Phaser.AUTO, 'battleships', { preload: preload, create: create, update: update, render: render });
+'use strict';
 
-var map;
+var game = new Phaser.Game(700, 500, Phaser.AUTO, 'battleships', { preload: preload, create: create, update: update, render: render });
+
 var fx;
-var layer1;
-var test;
 var ships = [[3, 'y'], [4, 'y'], [6, 'y'], [2, 'y'], [3, 'y'], [5, 'y']];
-var grid = [
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-			];
-
-function preload() {
-	game.load.spritesheet('test', 'assets/tilemap.png', 50, 50);
-	game.load.spritesheet('hit', 'assets/hit.png', 50, 50);
-	game.load.spritesheet('miss', 'assets/miss.png', 50, 50);
-	game.load.audio('boom', ['assets/Audio/boom.mp3', 'assets/Audio/boom.ogg']); //sprite it
-	game.load.audio('no', ['assets/Audio/nono.mp3', 'assets/Audio.nono.ogg']);
-	game.load.audio('sfx', ['assets/Audio/audiosprite.mp3', 'assets/Audio.audiosprite/ogg']);
-}
-
-function create() {
-	game.stage.backgroundColor = '#000';
-
-	fx = game.add.audio('sfx');
-	fx.allowMultiple = true;
-	fx.addMarker('boom', 0, 1.0);
-	fx.addMarker('noo', 1, 2.4);
-
-	map = game.add.tilemap();
-
-	map.addTilesetImage('', 'test', 50, 50);
-
-	layer1 = map.create('tiles', 10, 10, 50, 50);
-	layer1.resizeWorld();
-	layer1.inputEnabled = true;
-
-	for (var y = 0; y < 50; y++) {
-		for (var i = 0; i < 50; i++) {
-			map.putTile(0, i, y);
-		}
-	}
-
-	plotShips();
-
-	layer1.alpha = 0.9;
-}
-
+var background;
+var displayCount;
+var countDescription;
 var shipBoundaries;
 var xAxis;
 var yAxis;
 var yAxisPoints = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 var coords = [];
 var jointcoords = [];
+var shipCount = 0;
+var grid = [
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+];
+
+var WebFontConfig = {
+	active: function() {
+		game.time.events.add(Phaser.Timer.SECOND, createText, this);
+	},
+	google: {
+		families: ['Inconsolata']
+	}
+};
+
+function preload() {
+	game.load.spritesheet('hit', 'assets/hit.png', 50, 50);
+	game.load.spritesheet('miss', 'assets/miss.png', 50, 50);
+	game.load.image('background', 'assets/background.jpg');
+	game.load.audio('boom', ['assets/Audio/boom.mp3', 'assets/Audio/boom.ogg']); //sprite it
+	game.load.audio('no', ['assets/Audio/nono.mp3', 'assets/Audio.nono.ogg']);
+	game.load.audio('sfx', ['assets/Audio/audiosprite.mp3', 'assets/Audio.audiosprite/ogg']);
+
+	game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+}
+
+function create() {
+	game.stage.backgroundColor = '#14232d';
+
+	fx = game.add.audio('sfx');
+	fx.allowMultiple = true;
+	fx.addMarker('boom', 0, 1.0);
+	fx.addMarker('noo', 1, 2.4);
+
+	background = game.add.sprite(0, 0, 'background');
+	background.inputEnabled = true;
+
+	for (var y = 0; y < 10; y++) {
+		for (var i = 0; i < 10; i++) {
+			var graphs = game.add.graphics();
+			graphs.lineStyle(2, 0xffffff, 0.1);
+			graphs.drawRect(i * 50, y * 50, 50, 50);
+			graphs.endFill();
+		}
+	}
+
+	plotShips();
+}
+
+function createText() {
+	displayCount = game.add.text(574, 70, shipCount , {
+		font: '45px Inconsolata',
+		fill: '#d74848',
+		align: 'center',
+		fontWeight: 'bold'
+	});
+	countDescription = game.add.text(512, 130, 'LEFT TO FIND!', {
+		font: '28px Inconsolata',
+		fill: '#f7f85f',
+		align: 'center',
+		fontWeight: 'bold'
+	});
+}
 
 function plotShips() {
 	for (var i = 0; i < ships.length; i++) { // this is for each ship
+		shipCount += ships[i][0];
 		shipBoundaries = Math.floor(10 - ships[i][0]);
 		xAxis = Math.floor(Math.random() * shipBoundaries);
 		yAxis = yAxisPoints[Math.floor(Math.random() * yAxisPoints.length)];
@@ -70,65 +95,42 @@ function plotShips() {
 		yAxisPoints.splice(yAxis, 1);
 
 		for (var y = 1; y < ships[i][0] + 1; y++) {
-			jointcoords = { 
-				Y: yAxis, 
-				X: xAxis 
+			jointcoords = {
+				Y: yAxis,
+				X: xAxis
 			};
 
 			coords.push(jointcoords);
 			xAxis += 1;
 		}
 	}
+	console.log(jointcoords)
 }
 
 var clicked = [];
 
 
 function renderTile() {
-	var mouseX = game.input.activePointer.worldX;
-	var mouseY = game.input.activePointer.worldY;
-	var tileX = layer1.getTileX(mouseX);
-	var tileY = layer1.getTileY(mouseY);
-	// console.log(_.where(coords, {X: tileX, Y: tileY}))
+	var tileX = game.math.snapToFloor(game.input.x, 50) / 50;
+	var tileY = game.math.snapToFloor(game.input.y, 50) / 50;
 
 	for (var j = 0; j < clicked.length; j++) {
 		if (clicked[j][0] === tileX && clicked[j][1] === tileY) {
 			return false;
-		} 
+		}
 	}
 
 	if (_.isEmpty(_.where(coords, {X: tileX, Y: tileY}))) {
 		miss(tileX, tileY);
 	} else {
 		placeHit(tileX, tileY);
-	}			
+	}
 
-
-	// for (var i = 0; i < coords.length; i++) {
-	// 	if (tileX === coords[i].X && tileY === coords[i].Y) {
-	// 		// placeHit(tileX, tileY)
-	// 	console.log(tileX, coords[i].X)
-
-	// 		break;
-	// 	} else if (tileX !== coords[i].X && tileY !== coords[i].Y) {
-	// 		// map.putTile(3, layer1.getTileX(mouseX), layer1.getTileY(mouseY), layer1);
-	// 	console.log(tileX, coords[i].X)
-
-	// 		miss(tileX, tileY);
-	// 	}
-
-	// 	// If the for loop ends and the last loop isnt a hit, play the sound to avoid looping
-	// 	if (i + 1 === coords.length && tileX !== coords[i].X) {
-	// 		fx.stop('noo');
-	// 		fx.play('noo');
-	// 	}
-
-	// }
 	clicked.push([tileX, tileY]);
 }
 
 function update() {
-	layer1.events.onInputDown.add(renderTile, this);
+	background.events.onInputDown.add(renderTile, this);
 }
 
 function render() {
@@ -138,6 +140,8 @@ function placeHit(tileX, tileY) {
 	var spriteTest = game.add.sprite(tileX * 50, tileY * 50, 'hit', 1);
 	spriteTest.animations.add('hit', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], false);
 	spriteTest.animations.play('hit');
+	shipCount--;
+	displayCount.setText(shipCount)
 
 	// fx.stop('boom');
 	// fx.play('boom');
