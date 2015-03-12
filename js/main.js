@@ -19,7 +19,9 @@ var grid = [
 			];
 
 function preload() {
-	game.load.image('test', 'assets/tilemap.png');
+	game.load.spritesheet('test', 'assets/tilemap.png', 50, 50);
+	game.load.spritesheet('hit', 'assets/hit.png', 50, 50);
+	game.load.spritesheet('miss', 'assets/miss.png', 50, 50);
 	game.load.audio('boom', ['assets/Audio/boom.mp3', 'assets/Audio/boom.ogg']); //sprite it
 	game.load.audio('no', ['assets/Audio/nono.mp3', 'assets/Audio.nono.ogg']);
 	game.load.audio('sfx', ['assets/Audio/audiosprite.mp3', 'assets/Audio.audiosprite/ogg']);
@@ -40,7 +42,6 @@ function create() {
 	layer1 = map.create('tiles', 10, 10, 50, 50);
 	layer1.resizeWorld();
 	layer1.inputEnabled = true;
-
 
 	for (var y = 0; y < 50; y++) {
 		for (var i = 0; i < 50; i++) {
@@ -70,7 +71,6 @@ function plotShips() {
 
 		for (var y = 1; y < ships[i][0] + 1; y++) {
 			jointcoords = { 
-				'name': [xAxis, yAxis], 
 				Y: yAxis, 
 				X: xAxis 
 			};
@@ -89,32 +89,41 @@ function renderTile() {
 	var mouseY = game.input.activePointer.worldY;
 	var tileX = layer1.getTileX(mouseX);
 	var tileY = layer1.getTileY(mouseY);
+	// console.log(_.where(coords, {X: tileX, Y: tileY}))
 
 	for (var j = 0; j < clicked.length; j++) {
 		if (clicked[j][0] === tileX && clicked[j][1] === tileY) {
 			return false;
-		}
+		} 
 	}
 
-	for (var i = 0; i < coords.length; i++) {
-		if (tileX === coords[i].X && tileY === coords[i].Y) {
-			map.putTile(1, tileX, tileY);
+	if (_.isEmpty(_.where(coords, {X: tileX, Y: tileY}))) {
+		miss(tileX, tileY);
+	} else {
+		placeHit(tileX, tileY);
+	}			
 
-			fx.stop('boom');
-			fx.play('boom');
 
-			break;
-		} else {
-			map.putTile(3, layer1.getTileX(mouseX), layer1.getTileY(mouseY), layer1);
-		}
+	// for (var i = 0; i < coords.length; i++) {
+	// 	if (tileX === coords[i].X && tileY === coords[i].Y) {
+	// 		// placeHit(tileX, tileY)
+	// 	console.log(tileX, coords[i].X)
 
-		// If the for loop ends and the last loop isnt a hit, play the sound to avoid looping
-		if (i + 1 === coords.length && tileX !== coords[i].X) {
-			fx.stop('noo');
-			fx.play('noo');
-		}
+	// 		break;
+	// 	} else if (tileX !== coords[i].X && tileY !== coords[i].Y) {
+	// 		// map.putTile(3, layer1.getTileX(mouseX), layer1.getTileY(mouseY), layer1);
+	// 	console.log(tileX, coords[i].X)
 
-	}
+	// 		miss(tileX, tileY);
+	// 	}
+
+	// 	// If the for loop ends and the last loop isnt a hit, play the sound to avoid looping
+	// 	if (i + 1 === coords.length && tileX !== coords[i].X) {
+	// 		fx.stop('noo');
+	// 		fx.play('noo');
+	// 	}
+
+	// }
 	clicked.push([tileX, tileY]);
 }
 
@@ -123,4 +132,19 @@ function update() {
 }
 
 function render() {
+}
+
+function placeHit(tileX, tileY) {
+	var spriteTest = game.add.sprite(tileX * 50, tileY * 50, 'hit', 1);
+	spriteTest.animations.add('hit', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], false);
+	spriteTest.animations.play('hit');
+
+	// fx.stop('boom');
+	// fx.play('boom');
+}
+
+function miss(tileX, tileY) {
+	var missSprite = game.add.sprite(tileX * 50, tileY * 50, 'miss', 1);
+	missSprite.animations.add('miss', null, false);
+	missSprite.animations.play('miss');
 }
