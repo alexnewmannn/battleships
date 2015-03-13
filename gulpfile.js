@@ -2,9 +2,6 @@ var gulp = require('gulp');
 var express = require('express');
 var jshint = require('gulp-jshint');
 var notify = require('gulp-notify');
-var less = require('gulp-less');
-var livereload = require('gulp-livereload');
-var stylish = require('jshint-stylish');
 
 gulp.task('start', function() {
   var app = express();
@@ -31,4 +28,4 @@ gulp.task('lint', function() {
 
 gulp.task('watch', function() {
 	gulp.watch('js/*.js', ['lint']);
-})
+});
