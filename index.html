@@ -7,6 +7,20 @@
 	<body style="margin: 0">
 		<script src="libs/phaser.min.js"></script>
 		<script src="libs/lodash.min.js"></script>
-		<script src="js/main.js"></script>
+		<script src="js/pregame.js"></script>
+		<script src="js/game.js"></script>
+		<script src="js/win.js"></script>
+		<script>
+			(function() {
+				'use strict';
+
+				var game = new Phaser.Game(700, 500, Phaser.AUTO, 'battleships');
+
+				game.state.add('Pregame', Battleships.pregame);
+				game.state.add('Start', Battleships.start);
+				game.state.add('Win', Battleships.win);
+				game.state.start('Pregame');
+			})();
+		</script>
 	</body>
 </html>
