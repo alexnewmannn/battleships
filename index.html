@@ -10,6 +10,7 @@
 		<script src="js/pregame.js"></script>
 		<script src="js/game.js"></script>
 		<script src="js/win.js"></script>
+		<script src="js/lose.js"></script>
 		<script>
 			(function() {
 				'use strict';
@@ -19,6 +20,7 @@
 				game.state.add('Pregame', Battleships.pregame);
 				game.state.add('Start', Battleships.start);
 				game.state.add('Win', Battleships.win);
+				game.state.add('Lose', Battleships.win);
 				game.state.start('Pregame');
 			})();
 		</script>

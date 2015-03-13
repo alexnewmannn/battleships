@@ -36,7 +36,6 @@ var winText;
 
 Battleships.start = function(game) {};
 
-
 Battleships.start.prototype = {
 	preload: function() {
 		this.load.spritesheet('hit', 'assets/hit.png', 50, 50);
@@ -140,7 +139,6 @@ Battleships.start.prototype = {
 		});
 
 		this.add.button(555, this.world.centerY + 150, 'win', this.changeState, this);
-
 	},
 
 	placeHit: function(tileX, tileY) {
@@ -167,8 +165,8 @@ Battleships.start.prototype = {
 
 		missCount++;
 
-		if (missCount == 20) {
-			console.log('you lose bro')
+		if (missCount === 70) {
+			this.game.state.start('Lose');
 		}
 	},
 
