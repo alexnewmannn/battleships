@@ -1,7 +1,7 @@
 'use strict';
 
-Battleships.win = function(game) {};
-Battleships.win.prototype = {
+Battleships.lose = function(game) {};
+Battleships.lose.prototype = {
 	preload: function() {
 		this.load.image('lost', 'assets/lost.jpg');
 

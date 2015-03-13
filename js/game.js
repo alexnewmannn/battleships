@@ -165,6 +165,9 @@ Battleships.start.prototype = {
 
 		missCount++;
 
+		fx.stop('noo');
+		fx.play('noo');
+
 		if (missCount === 70) {
 			this.game.state.start('Lose');
 		}
